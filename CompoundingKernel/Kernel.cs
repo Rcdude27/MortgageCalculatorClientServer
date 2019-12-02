@@ -11,6 +11,7 @@ namespace CompoundingKernel
 {
     class Kernel
     {
+        // Commit
 
         // Field for the named pipe.
         private static NamedPipeServerStream npUIPipe;
