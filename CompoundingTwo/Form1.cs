@@ -32,6 +32,7 @@ namespace CompoundingTwo
             // Start the kernel process, then connect to the named pipe.
             Process pKernel = new Process();
             pKernel.StartInfo.FileName = "CompoundingKernel.exe";
+            pKernel.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             pKernel.Start();
             Thread.Sleep(500);
             npClient = new NamedPipeClientStream("CompoundingKernel");
@@ -53,7 +54,7 @@ namespace CompoundingTwo
             }
         }
 
-        private (string strCommand, string strArgs) tstrReceiveMsg()
+        private (string strCommand, string strArgument) tstrReceiveMsg()
         {
             // Receive the message from the pipe, convert to string.
             byte[] byBuffer = new byte[100];
@@ -73,7 +74,7 @@ namespace CompoundingTwo
             string strMessage = strCommand + ":" + strArgument;
             // Convert to array of bytes and send out over the pipe.
             byte[] byMessage = Encoding.ASCII.GetBytes(strMessage);
-            npClient.Write(byMessage, 9, byMessage.Length);
+            npClient.Write(byMessage, 0, byMessage.Length);
         }
 
         private void btnCalc_Click(object sender, EventArgs e)

@@ -11,8 +11,6 @@ namespace CompoundingKernel
 {
     class Kernel
     {
-        // Commit
-
         // Field for the named pipe.
         private static NamedPipeServerStream npUIPipe;
 
@@ -22,9 +20,9 @@ namespace CompoundingKernel
             npUIPipe = new NamedPipeServerStream("CompoundingKernel", PipeDirection.InOut, 20, PipeTransmissionMode.Message);
             npUIPipe.WaitForConnection();
             // UI client has connected. Carry out interaction.
-            vInteract();
-            // Connection closed. Dispose of the named pipe.
-            npUIPipe.Dispose();
+            // 5.2 Create and start a thread to exec. vInteract()
+            Thread tInteract = new Thread(vInteract);
+            tInteract.Start();
         }
 
         private static void vInteract()
@@ -40,7 +38,10 @@ namespace CompoundingKernel
                 (string strCMD, string strArg) = tstrReceiveMsg();
                 bRunning = bProcessMsg(strCMD, strArg, dictCompInfo);
             }
-            
+
+            // Connection closed. Dispose of the named pipe.
+            npUIPipe.Dispose();
+
         }
 
         private static bool bProcessMsg(string strCMD, string strArg, Dictionary<string , string> dictCompInfo) 
@@ -134,7 +135,7 @@ namespace CompoundingKernel
             string strMessage = strCommand + ":" + strArgument;
             // Convert to array of bytes and send out over the pipe.
             byte[] byMessage = Encoding.ASCII.GetBytes(strMessage);
-            npUIPipe.Write(byMessage, 9, byMessage.Length);
+            npUIPipe.Write(byMessage, 0, byMessage.Length);
         }
     }
 }
